@@ -37,12 +37,13 @@ const UI = (() => {
     const fab = document.getElementById('fab');
     const isAdmin = Auth.isAdmin();
     if (section === 'tarefas') fab.style.display = 'flex';
-    else if (section === 'registros') fab.style.display = isAdmin ? 'flex' : 'none';
+    else if (section === 'registros' || section === 'avaliacoes') fab.style.display = isAdmin ? 'flex' : 'none';
     else fab.style.display = 'none';
 
     if (section === 'admin-users')  Admin.carregarUsuarios();
     if (section === 'admin-tasks')  Admin.carregarTarefasAdmin();
     if (section === 'admin-turmas') Admin.carregarTurmas();
+    if (section === 'avaliacoes')   { Avaliacoes.montarSelectTipo('av-tipo'); UI.renderAvaliacoes(); }
   }
 
   // ─── Abas Pendentes / Concluídas ─────────────────────────────────────────
@@ -84,8 +85,15 @@ const UI = (() => {
 
   // ─── Modais: Registros ────────────────────────────────────────────────────
 
-  function abrirModalRegistro()  { document.getElementById('ov-registro').classList.add('on'); }
+  function abrirModalRegistro()  { Registros.abrirParaCriar(); }
   function fecharModalRegistro() { document.getElementById('ov-registro').classList.remove('on'); }
+
+  function abrirModalAvaliacao()  { Avaliacoes.abrirParaCriar(); }
+  function fecharModalAvaliacao() { document.getElementById('ov-avaliacao').classList.remove('on'); }
+
+  function fecharDetalheAvaliacao() {
+    document.getElementById('ov-av-detalhe').classList.remove('on');
+  }
 
   // ─── Modal: Config ────────────────────────────────────────────────────────
 
@@ -428,7 +436,105 @@ const UI = (() => {
     document.getElementById('ov-reg-detalhe').classList.remove('on');
   }
 
-    // ─── privado ──────────────────────────────────────────────────────────────
+    // ─── Renderização: Avaliações ───────────────────────────────────────────────
+
+  function renderAvaliacoes() {
+    const cache  = Avaliacoes.getCache();
+    const busca  = (document.getElementById('av-busca')?.value || '').toLowerCase();
+    const filTipo= document.getElementById('fil-av-tipo')?.value || '';
+    const filMat = document.getElementById('fil-av-mat')?.value  || '';
+    const ord    = document.getElementById('fil-av-ord')?.value  || 'data';
+    const list   = document.getElementById('av-list');
+    if (!list) return;
+
+    // Popula filtro de matéria
+    const mats   = [...new Set(cache.map(a => a.materia))].sort();
+    const selMat = document.getElementById('fil-av-mat');
+    if (selMat) {
+      const cur = selMat.value;
+      selMat.innerHTML = '<option value="">Todas as matérias</option>';
+      mats.forEach(m => _addOpt(selMat, m));
+      selMat.value = cur;
+    }
+
+    let visible = cache.filter(a => {
+      if (filTipo && a.tipo    !== filTipo) return false;
+      if (filMat  && a.materia !== filMat)  return false;
+      if (busca   && !a.titulo.toLowerCase().includes(busca)) return false;
+      return true;
+    });
+
+    visible.sort((a, b) => {
+      if (ord === 'materia') return a.materia.localeCompare(b.materia);
+      if (ord === 'tipo')    return a.tipo.localeCompare(b.tipo);
+      return (a.data || '').localeCompare(b.data || '');
+    });
+
+    list.innerHTML = '';
+    if (visible.length === 0) {
+      list.innerHTML = '<div class="empty">Nenhuma avaliação encontrada.</div>';
+      return;
+    }
+    visible.forEach(av => _renderAvCard(av, list));
+  }
+
+  function _renderAvCard(av, container) {
+    const hoje    = Dates.hojeISO();
+    const passada = av.data && av.data < hoje;
+    const card    = document.createElement('div');
+    card.className = 'reg-card-compact' + (passada ? ' av-passada' : '');
+    card.innerHTML = `
+      <div class="reg-card-left">
+        <div class="reg-card-title-row">
+          <span class="reg-card-titulo">${av.titulo}</span>
+          <span class="badge av-tipo-badge av-tipo-${av.tipo}">${Avaliacoes.tipoLabel(av.tipo)}</span>
+        </div>
+        <div class="reg-card-sub">
+          <span class="badge b-materia" style="font-size:11px">${av.materia}</span>
+          <span class="reg-data">${Dates.fmt(av.data)}</span>
+          ${av.horario ? `<span class="reg-data">· ${av.horario}</span>` : ''}
+          ${av.dicas    ? '<span class="reg-ind">Dicas</span>' : ''}
+          ${av.material ? '<span class="reg-ind reg-ind-arq">Material</span>' : ''}
+        </div>
+      </div>
+      <svg class="reg-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>`;
+    card.addEventListener('click', () => _abrirDetalheAvaliacao(av));
+    container.appendChild(card);
+  }
+
+  function _abrirDetalheAvaliacao(av) {
+    Avaliacoes.setDetalheId(av.id);
+
+    document.getElementById('avd-titulo').textContent = av.titulo;
+
+    document.getElementById('avd-meta').innerHTML = `
+      <span class="badge b-materia">${av.materia}</span>
+      <span class="badge av-tipo-badge av-tipo-${av.tipo}">${Avaliacoes.tipoLabel(av.tipo)}</span>
+      <span class="reg-data">${Dates.fmt(av.data)}</span>
+      ${av.horario ? `<span class="reg-data">· ${av.horario}</span>` : ''}`;
+
+    document.getElementById('avd-conteudo').textContent = av.conteudo || '';
+
+    const dicasWrap = document.getElementById('avd-dicas-wrap');
+    if (av.dicas) {
+      document.getElementById('avd-dicas').textContent = av.dicas;
+      dicasWrap.style.display = '';
+    } else { dicasWrap.style.display = 'none'; }
+
+    const matWrap = document.getElementById('avd-material-wrap');
+    if (av.material) {
+      const link = document.getElementById('avd-material');
+      link.href = av.material;
+      matWrap.style.display = '';
+    } else { matWrap.style.display = 'none'; }
+
+    document.getElementById('btn-editar-av').style.display = Auth.isAdmin() ? '' : 'none';
+    document.getElementById('ov-av-detalhe').classList.add('on');
+  }
+
+  // ─── privado ──────────────────────────────────────────────────────────────
 
   function _updateRange(inputId, labelId) {
     const val = document.getElementById(inputId).value;
@@ -489,6 +595,8 @@ const UI = (() => {
     render, renderTarefas, renderRegistros,
     mostrarToastAtualizacao, ocultarToastAtualizacao, atualizarTarefas,
     abrirDetalheRegistro, fecharDetalheRegistro,
+    abrirModalAvaliacao, fecharModalAvaliacao, fecharDetalheAvaliacao,
+    renderAvaliacoes,
     abrirImagem, fecharImagem,
   };
 })();

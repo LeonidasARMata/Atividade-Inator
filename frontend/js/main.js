@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Fechar overlays clicando fora do modal
-  ['ov-tarefa','ov-registro','ov-cfg','ov-imagem','ov-confirma','ov-reg-detalhe'].forEach(id => {
+  ['ov-tarefa','ov-registro','ov-cfg','ov-imagem','ov-confirma','ov-reg-detalhe','ov-avaliacao','ov-av-detalhe'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', e => {
       if (e.target === e.currentTarget) {
         if (id === 'ov-tarefa')   UI.fecharModalTarefa();
@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (id === 'ov-cfg')      UI.fecharCfg();
         if (id === 'ov-imagem')      UI.fecharImagem();
         if (id === 'ov-confirma')    UI.fecharConfirma();
-        if (id === 'ov-reg-detalhe') UI.fecharDetalheRegistro();
+        if (id === 'ov-reg-detalhe')  UI.fecharDetalheRegistro();
+        if (id === 'ov-avaliacao')    UI.fecharModalAvaliacao();
+        if (id === 'ov-av-detalhe')   UI.fecharDetalheAvaliacao();
       }
     });
   });
@@ -41,6 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     UI.fecharImagem();
     UI.fecharConfirma();
     UI.fecharDetalheRegistro();
+    UI.fecharModalAvaliacao();
+    UI.fecharDetalheAvaliacao();
   });
 });
 

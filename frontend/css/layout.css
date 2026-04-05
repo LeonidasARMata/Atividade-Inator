@@ -273,3 +273,21 @@ h2 { font-size: 17px; font-weight: 500; margin-bottom: 3px; }
 .btn-arquivo:hover { background: #B5D4F4; }
 
 .btn-editar-registro { color: var(--color-accent); border-color: var(--color-accent); }
+
+/* ── Avaliações ──────────────────────────────────────────────────── */
+.av-passada { opacity: 0.55; }
+
+.av-tipo-badge {
+  font-size: 10px; font-weight: 500;
+  padding: 2px 7px; border-radius: 20px; white-space: nowrap;
+}
+.av-tipo-simulado                  { background: #EEEDFE; color: #3C3489; }
+.av-tipo-somativa                  { background: #E6F1FB; color: #0C447C; }
+.av-tipo-segunda_chamada_simulado  { background: #FAEEDA; color: #633806; }
+.av-tipo-segunda_chamada_somativa  { background: #FAEEDA; color: #633806; }
+.av-tipo-avaliacao_especifica      { background: #EAF3DE; color: #27500A; }
+
+.av-detalhe-body    { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+.av-detalhe-section { background: var(--color-bg-subtle); border-radius: var(--radius-md); padding: 10px 12px; }
+.av-detalhe-label   { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 5px; }
+.av-detalhe-text    { font-size: 13px; color: var(--color-text-primary); line-height: 1.6; white-space: pre-wrap; }

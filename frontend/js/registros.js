@@ -19,7 +19,7 @@ const Registros = (() => {
     document.getElementById('btn-excluir-registro').style.display  = 'none';
     _limpar();
     const d = document.getElementById('rg-data');
-    if (d && !d.value) d.value = Dates.hojeISO();
+    if (d) d.value = Dates.hojeISO();   // sempre começa com hoje, editável
     document.getElementById('ov-registro').classList.add('on');
   }
 

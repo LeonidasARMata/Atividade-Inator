@@ -140,6 +140,7 @@ const Auth = (() => {
     setTimeout(() => {
       Tasks.carregar().then(() => Tasks.iniciarPolling());
       Registros.carregar();
+      Avaliacoes.carregar();
     }, 0);
   }
 

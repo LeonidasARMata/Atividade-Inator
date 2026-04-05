@@ -158,6 +158,35 @@
     <div id="reg-list" class="reg-list"></div>
   </div>
 
+  <!-- ── SEÇÃO: AVALIAÇÕES ────────────────────────────────────── -->
+  <div id="sec-avaliacoes" class="section">
+    <div class="reg-search-bar">
+      <input id="av-busca" type="text" placeholder="Buscar por título..." oninput="UI.renderAvaliacoes()" />
+    </div>
+    <div class="filters" style="margin-bottom:.75rem">
+      <span class="fl">Tipo:</span>
+      <select id="fil-av-tipo" onchange="UI.renderAvaliacoes()">
+        <option value="">Todos os tipos</option>
+        <option value="simulado">Simulado</option>
+        <option value="somativa">Somativa</option>
+        <option value="segunda_chamada_simulado">2ª Chamada – Simulado</option>
+        <option value="segunda_chamada_somativa">2ª Chamada – Somativa</option>
+        <option value="avaliacao_especifica">Avaliação Específica</option>
+      </select>
+      <span class="fl">Matéria:</span>
+      <select id="fil-av-mat" onchange="UI.renderAvaliacoes()">
+        <option value="">Todas</option>
+      </select>
+      <span class="fl">Ordenar:</span>
+      <select id="fil-av-ord" onchange="UI.renderAvaliacoes()">
+        <option value="data">Data</option>
+        <option value="materia">Matéria</option>
+        <option value="tipo">Tipo</option>
+      </select>
+    </div>
+    <div id="av-list" class="reg-list"></div>
+  </div>
+
   <!-- ── SEÇÃO: ADMIN — USUÁRIOS ───────────────────────────────── -->
   <div id="sec-admin-users" class="section">
     <div class="admin-section-header">
@@ -223,9 +252,13 @@
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="2" rx="1" fill="currentColor"/><rect x="3" y="9" width="10" height="2" rx="1" fill="currentColor"/><rect x="3" y="14" width="7" height="2" rx="1" fill="currentColor"/></svg>
     <span>Tarefas</span>
   </button>
-  <button class="nav-btn" data-section="registros"       onclick="UI.setSection('registros')">
+  <button class="nav-btn" data-section="registros" onclick="UI.setSection('registros')">
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="4" y="3" width="12" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="7" y="7" width="6" height="1.5" rx=".75" fill="currentColor"/><rect x="7" y="10" width="4" height="1.5" rx=".75" fill="currentColor"/></svg>
     <span>Registros</span>
+  </button>
+  <button class="nav-btn" data-section="avaliacoes" onclick="UI.setSection('avaliacoes')">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 5h12M4 10h8M4 15h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="14" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M14.5 14l1 1 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Avaliações</span>
   </button>
 
 </nav>
@@ -370,6 +403,102 @@
 </div>
 
 
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL: CRIAR / EDITAR AVALIAÇÃO (só admin)
+════════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="ov-avaliacao">
+  <div class="modal">
+    <p class="modal-title" id="av-titulo-modal">Nova avaliação</p>
+
+    <div class="f-row">
+      <div class="f">
+        <label>Tipo</label>
+        <select id="av-tipo" onchange="Avaliacoes.atualizarMateriasModal()">
+          <option value="">Selecione o tipo...</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>Matéria</label>
+        <select id="av-mat" disabled>
+          <option value="">Selecione o tipo primeiro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="f"><label>Título</label>
+      <input id="av-titulo" type="text" placeholder="Ex: Simulado bimestral — Área de Humanas" />
+    </div>
+
+    <div class="f-row">
+      <div class="f"><label>Data</label>
+        <input id="av-data" type="date" />
+      </div>
+      <div class="f"><label>Horário</label>
+        <input id="av-horario" type="text" placeholder="Ex: 08:00 – 10:30" />
+      </div>
+    </div>
+
+    <div class="f"><label>Conteúdo</label>
+      <textarea id="av-conteudo" rows="3" placeholder="Assuntos cobrados na avaliação..." style="width:100%;resize:vertical"></textarea>
+    </div>
+    <div class="f"><label>Dicas <span class="hint">(opcional)</span></label>
+      <textarea id="av-dicas" rows="2" placeholder="Dicas de estudo..." style="width:100%;resize:vertical"></textarea>
+    </div>
+    <div class="f"><label>Material <span class="hint">(opcional — cole um link)</span></label>
+      <input id="av-material" type="url" placeholder="https://..." />
+    </div>
+
+    <p class="err" id="av-err"></p>
+    <div class="modal-footer">
+      <button class="btn-red" id="btn-excluir-av" style="display:none;margin-right:auto"
+        onclick="Avaliacoes.excluirDoModal()">Excluir</button>
+      <button class="btn-ghost" onclick="UI.fecharModalAvaliacao()">Cancelar</button>
+      <button class="btn-blue" id="btn-salvar-av" onclick="Avaliacoes.salvar()">Cadastrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     OVERLAY: DETALHE DA AVALIAÇÃO
+════════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="ov-av-detalhe">
+  <div class="modal modal-detalhe">
+    <div class="reg-detalhe-header">
+      <div style="flex:1;min-width:0">
+        <p class="modal-title" id="avd-titulo" style="margin-bottom:6px"></p>
+        <div class="meta" id="avd-meta"></div>
+      </div>
+      <button class="btn-icon-danger" onclick="UI.fecharDetalheAvaliacao()" style="font-size:16px;flex-shrink:0">✕</button>
+    </div>
+
+    <div class="av-detalhe-body">
+      <div class="av-detalhe-section" id="avd-conteudo-wrap">
+        <p class="av-detalhe-label">Conteúdo</p>
+        <p class="av-detalhe-text" id="avd-conteudo"></p>
+      </div>
+      <div class="av-detalhe-section" id="avd-dicas-wrap" style="display:none">
+        <p class="av-detalhe-label">Dicas</p>
+        <p class="av-detalhe-text" id="avd-dicas"></p>
+      </div>
+      <div class="av-detalhe-section" id="avd-material-wrap" style="display:none">
+        <p class="av-detalhe-label">Material</p>
+        <a id="avd-material" class="btn-arquivo" href="#" target="_blank" rel="noopener">
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+            <path d="M4 4h8l4 4v8H4V4z" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          Abrir material
+        </a>
+      </div>
+    </div>
+
+    <div class="modal-footer" style="margin-top:1rem">
+      <button class="btn-ghost btn-editar-registro" id="btn-editar-av" style="display:none"
+        onclick="Avaliacoes.abrirParaEditar()">Editar avaliação</button>
+      <button class="btn-ghost" onclick="UI.fecharDetalheAvaliacao()">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast de atualização do banco -->
 <div class="toast-update" id="toast-update" style="display:none">
   <span>Foi detectada uma alteração no banco de dados.</span>
@@ -382,6 +511,7 @@
 <script src="js/dates.js"></script>
 <script src="js/tasks.js"></script>
 <script src="js/registros.js"></script>
+<script src="js/avaliacoes.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/auth.js"></script>

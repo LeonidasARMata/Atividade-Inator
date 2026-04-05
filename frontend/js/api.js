@@ -72,6 +72,12 @@ const Api = (() => {
   const updateRegistro = (id, fd)   => _req('PATCH',  `/api/registros/${id}`, fd, true);
   const deleteImagem   = (imgId)    => _req('DELETE', `/api/registros/imagens/${imgId}`);
 
+  // ── Avaliações ───────────────────────────────────────────────────
+  const getAvaliacoes    = ()      => _req('GET',    '/api/avaliacoes');
+  const createAvaliacao  = (p)     => _req('POST',   '/api/avaliacoes', p);
+  const updateAvaliacao  = (id, p) => _req('PATCH',  `/api/avaliacoes/${id}`, p);
+  const deleteAvaliacao  = (id)    => _req('DELETE', `/api/avaliacoes/${id}`);
+
   // ── Admin ────────────────────────────────────────────────────────
   const adminGetUsers      = ()            => _req('GET',    '/api/admin/users');
   const adminPatchUser     = (id, p)       => _req('PATCH',  `/api/admin/users/${id}`, p);
@@ -88,6 +94,7 @@ const Api = (() => {
     getTasks, createTask, updateTask, deleteTask, markDone, unmarkDone,
     getRegistros, createRegistro, updateRegistro, deleteRegistro,
     deleteImagem,
+    getAvaliacoes, createAvaliacao, updateAvaliacao, deleteAvaliacao,
     adminGetUsers, adminPatchUser, adminDeleteUser,
     adminGetTurmas, adminCreateTurma, adminDeleteTurma,
     adminGetTasks, adminDeleteTask,
