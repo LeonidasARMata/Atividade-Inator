@@ -81,15 +81,57 @@ const Auth = (() => {
     }
   }
 
-  // ── Config ────────────────────────────────────────────────────
+  // ── Config + Perfil ──────────────────────────────────────────
   async function salvarConfig2() {
-    const dias    = parseInt(document.getElementById('cfg2-dias').value);
-    const atencao = UI.getChecked('cfg2-materias');
+    const dias      = parseInt(document.getElementById('cfg2-dias').value);
+    const atencao   = UI.getChecked('cfg2-materias');
+    const username  = document.getElementById('cfg2-username')?.value.trim() || '';
+    const senhaAtual= document.getElementById('cfg2-senha-atual')?.value || '';
+    const senhaNova = document.getElementById('cfg2-senha-nova')?.value || '';
+    const senhaConf = document.getElementById('cfg2-senha-conf')?.value || '';
+    const errEl     = document.getElementById('cfg2-err');
+    if (errEl) errEl.style.display = 'none';
+
+    // Valida senha antes de salvar
+    if (senhaNova && senhaNova !== senhaConf) {
+      if (errEl) { errEl.textContent = 'As senhas não coincidem.'; errEl.style.display = 'block'; }
+      return;
+    }
+    if (senhaNova && senhaNova.length < 6) {
+      if (errEl) { errEl.textContent = 'A nova senha deve ter pelo menos 6 caracteres.'; errEl.style.display = 'block'; }
+      return;
+    }
+
     try {
+      // Salva preferências
       currentUser = await Api.updateConfig(dias, atencao);
+
+      // Salva perfil se houve alteração
+      const perfilPayload = {};
+      if (username && username !== currentUser.username) perfilPayload.username = username;
+      if (senhaNova) { perfilPayload.senha_atual = senhaAtual; perfilPayload.senha_nova = senhaNova; }
+
+      if (Object.keys(perfilPayload).length > 0) {
+        const res = await Api.updateProfile(perfilPayload);
+        currentUser = res.user;
+        // Atualiza token com novo username
+        if (res.token) localStorage.setItem('token', res.token);
+        // Atualiza exibição na topbar
+        document.getElementById('av-nome').textContent = currentUser.username;
+      }
+
+      // Limpa campos de senha
+      ['cfg2-senha-atual','cfg2-senha-nova','cfg2-senha-conf'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
       UI.fecharCfg();
       UI.render();
-    } catch (e) { alert(e.message); }
+    } catch (e) {
+      if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+      else alert(e.message);
+    }
   }
 
   // ── Logout ────────────────────────────────────────────────────

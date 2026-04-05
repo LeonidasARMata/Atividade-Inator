@@ -152,6 +152,15 @@ const UI = (() => {
     document.getElementById('cfg2-dias').value = u.dias_urgencia;
     _updateRange('cfg2-dias', 'cfg2-dias-val');
     montarMultiSelect('cfg2-materias', u.materias_atencao || []);
+    // Preenche username atual e limpa campos de senha
+    const unEl = document.getElementById('cfg2-username');
+    if (unEl) unEl.value = u.username || '';
+    ['cfg2-senha-atual','cfg2-senha-nova','cfg2-senha-conf'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const errEl = document.getElementById('cfg2-err');
+    if (errEl) errEl.style.display = 'none';
     document.getElementById('ov-cfg').classList.add('on');
   }
   function fecharCfg() { document.getElementById('ov-cfg').classList.remove('on'); }

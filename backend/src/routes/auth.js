@@ -96,8 +96,62 @@ router.get('/turmas', async (_req, res) => {
   const { data, error } = await supabase
     .from('turmas').select('*').order('ano').order('letra');
   if (error) return res.status(500).json({ error: error.message });
-  console.log(data)
   res.json(data);
+});
+
+// ── PATCH /api/auth/profile ─────────────────────────────────────
+// Atualiza nome de exibição (username) e/ou senha do usuário logado
+router.patch('/profile', authMiddleware, async (req, res) => {
+  const { username, senha_atual, senha_nova } = req.body;
+  const update = {};
+
+  // Atualiza username se fornecido
+  if (username) {
+    const u = username.trim();
+    if (u.length < 3)
+      return res.status(400).json({ error: 'Nome de usuário deve ter pelo menos 3 caracteres.' });
+
+    // Verifica duplicata (excluindo o próprio usuário)
+    const { data: dup } = await supabase
+      .from('users').select('id').eq('username', u).neq('id', req.user.id).maybeSingle();
+    if (dup)
+      return res.status(409).json({ error: 'Nome de usuário já está em uso.' });
+
+    update.username = u;
+  }
+
+  // Atualiza senha se fornecida
+  if (senha_nova) {
+    if (!senha_atual)
+      return res.status(400).json({ error: 'Informe a senha atual para alterá-la.' });
+    if (senha_nova.length < 6)
+      return res.status(400).json({ error: 'A nova senha deve ter pelo menos 6 caracteres.' });
+
+    // Valida senha atual
+    const { data: user } = await supabase
+      .from('users').select('senha_hash').eq('id', req.user.id).single();
+    const ok = await bcrypt.compare(senha_atual, user.senha_hash);
+    if (!ok)
+      return res.status(401).json({ error: 'Senha atual incorreta.' });
+
+    update.senha_hash = await bcrypt.hash(senha_nova, 10);
+  }
+
+  if (!Object.keys(update).length)
+    return res.status(400).json({ error: 'Nenhum campo para atualizar.' });
+
+  const { data, error } = await supabase
+    .from('users')
+    .update(update)
+    .eq('id', req.user.id)
+    .select('id, email, nome, username, turma_id, is_admin, dias_urgencia, materias_atencao')
+    .single();
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  // Gera novo token com username atualizado
+  const token = _token(data);
+  res.json({ user: _pub(data), token });
 });
 
 // ── helpers ──────────────────────────────────────────────────────

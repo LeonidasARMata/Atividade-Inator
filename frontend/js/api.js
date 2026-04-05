@@ -54,7 +54,8 @@ const Api = (() => {
   const login        = (email, senha)  => _req('POST',  '/api/auth/login',    { email, senha });
   const getMe        = ()              => _req('GET',   '/api/auth/me');
   const getTurmas    = ()              => _req('GET',   '/api/auth/turmas');
-  const updateConfig = (d, a)          => _req('PATCH', '/api/auth/config',   { dias_urgencia: d, materias_atencao: a });
+  const updateConfig  = (d, a)          => _req('PATCH', '/api/auth/config',   { dias_urgencia: d, materias_atencao: a });
+  const updateProfile = (p)             => _req('PATCH', '/api/auth/profile',  p);
 
   // ── Tasks ─────────────────────────────────────────────────────────
   const getTasks   = ()       => _req('GET',    '/api/tasks');
@@ -90,7 +91,7 @@ const Api = (() => {
   const adminFixarRegistro = (id)          => _req('PATCH',  `/api/admin/registros/${id}/fixar`);
 
   return {
-    register, login, getMe, getTurmas, updateConfig,
+    register, login, getMe, getTurmas, updateConfig, updateProfile,
     getTasks, createTask, updateTask, deleteTask, markDone, unmarkDone,
     getRegistros, createRegistro, updateRegistro, deleteRegistro,
     deleteImagem,

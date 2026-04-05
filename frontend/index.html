@@ -362,6 +362,7 @@
 <div class="overlay" id="ov-cfg">
   <div class="modal">
     <p class="modal-title">Configurações</p>
+
     <div class="cfg-section">
       <div class="cfg-label">Avisar urgência com quantos dias de antecedência?</div>
       <div class="range-row">
@@ -370,10 +371,38 @@
         <span class="range-val" id="cfg2-dias-val">3 dias</span>
       </div>
     </div>
+
     <div class="cfg-section">
       <div class="cfg-label">Matérias de atenção</div>
       <div class="multi-select" id="cfg2-materias"></div>
     </div>
+
+    <div class="cfg-divider"></div>
+
+    <div class="cfg-section">
+      <div class="cfg-label">Nome de exibição</div>
+      <input id="cfg2-username" type="text" placeholder="Seu nome de usuário" style="width:100%" />
+    </div>
+
+    <div class="cfg-section">
+      <div class="cfg-label">Alterar senha <span class="hint">(deixe em branco para não alterar)</span></div>
+      <div class="f" style="margin-bottom:.5rem">
+        <label>Senha atual</label>
+        <input id="cfg2-senha-atual" type="password" placeholder="••••••" style="width:100%" />
+      </div>
+      <div class="f-row">
+        <div class="f">
+          <label>Nova senha</label>
+          <input id="cfg2-senha-nova" type="password" placeholder="mín. 6 caracteres" />
+        </div>
+        <div class="f">
+          <label>Confirmar</label>
+          <input id="cfg2-senha-conf" type="password" placeholder="repita a senha" />
+        </div>
+      </div>
+    </div>
+
+    <p class="err" id="cfg2-err"></p>
     <div class="modal-footer">
       <button class="btn-ghost" onclick="UI.fecharCfg()">Cancelar</button>
       <button class="btn-blue"  onclick="Auth.salvarConfig2()">Salvar</button>
