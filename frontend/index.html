@@ -528,6 +528,29 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL: TERMOS E CONDIÇÕES
+════════════════════════════════════════════════════════════════ -->
+<div class="overlay" id="ov-termos">
+  <div class="modal modal-termos">
+    <div class="termos-header">
+      <p class="modal-title" id="termos-titulo">Termos e Condições de Uso</p>
+      <span class="termos-versao" id="termos-versao"></span>
+    </div>
+    <div class="termos-body" id="termos-body"></div>
+    <div class="termos-footer">
+      <label class="termos-check-label" id="termos-check-label">
+        <input type="checkbox" id="termos-check" onchange="Termos.onCheckChange()" />
+        <span>Li e concordo com os Termos e Condições de Uso</span>
+      </label>
+      <div class="modal-footer" style="margin-top:.75rem">
+        <button class="btn-ghost" id="btn-termos-cancelar" onclick="Termos.cancelar()">Cancelar</button>
+        <button class="btn-blue" id="btn-termos-confirmar" disabled onclick="Termos.confirmar()">Cadastrar-se</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Toast de atualização do banco -->
 <div class="toast-update" id="toast-update" style="display:none">
   <span>Foi detectada uma alteração no banco de dados.</span>
@@ -541,6 +564,7 @@
 <script src="js/tasks.js"></script>
 <script src="js/registros.js"></script>
 <script src="js/avaliacoes.js"></script>
+<script src="js/termos.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/auth.js"></script>

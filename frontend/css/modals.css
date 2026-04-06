@@ -26,3 +26,62 @@
 }
 .btn-red:hover { background: #A32D2D; }
 .btn-red:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── Modal de Termos ─────────────────────────────────────────── */
+.modal-termos {
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.termos-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: .75rem;
+  flex-shrink: 0;
+}
+
+.termos-versao {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.termos-body {
+  flex: 1;
+  overflow-y: auto;
+  border: 0.5px solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  background: var(--color-bg-subtle);
+  margin-bottom: 1rem;
+  min-height: 200px;
+}
+
+.termos-hr     { border: none; border-top: 0.5px solid var(--color-border-default); margin: .6rem 0; }
+.termos-secao  { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin: .75rem 0 .25rem; }
+.termos-p      { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: .25rem; }
+.termos-item   { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; padding-left: 8px; margin-bottom: .15rem; }
+
+.termos-footer { flex-shrink: 0; }
+
+.termos-check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+.termos-check-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: var(--color-accent);
+}

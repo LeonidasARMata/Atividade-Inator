@@ -7,6 +7,7 @@ const authRoutes       = require('./routes/auth');
 const tasksRoutes      = require('./routes/tasks');
 const registrosRoutes  = require('./routes/registros');
 const avaliacoesRoutes = require('./routes/avaliacoes');
+const termosRoutes     = require('./routes/termos');
 const adminRoutes      = require('./routes/admin');
 
 const app  = express();
@@ -21,6 +22,7 @@ app.use('/api/auth',       authRoutes);
 app.use('/api/tasks',      tasksRoutes);
 app.use('/api/registros',  registrosRoutes);
 app.use('/api/avaliacoes', avaliacoesRoutes);
+app.use('/api/termos',     termosRoutes);
 app.use('/api/admin',      adminRoutes);
 
 app.use((err, _req, res, _next) => {

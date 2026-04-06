@@ -29,28 +29,44 @@ const Auth = (() => {
 
     _hideErr('r-err');
 
-    if (!nome)     return _err('r-err', 'Informe seu nome completo.');
-    if (!email)    return _err('r-err', 'Informe seu e-mail.');
-    if (!username) return _err('r-err', 'Informe um nome de usuário.');
-    if (!turma_id) return _err('r-err', 'Selecione sua turma.');
-    if (!senha)    return _err('r-err', 'Crie uma senha.');
-    if (senha.length < 6)      return _err('r-err', 'A senha deve ter pelo menos 6 caracteres.');
-    if (senha !== confirma)    return _err('r-err', 'As senhas não coincidem.');
+    if (!nome)          return _err('r-err', 'Informe seu nome completo.');
+    if (!email)         return _err('r-err', 'Informe seu e-mail.');
+    if (!username)      return _err('r-err', 'Informe um nome de usuário.');
+    if (!turma_id)      return _err('r-err', 'Selecione sua turma.');
+    if (!senha)         return _err('r-err', 'Crie uma senha.');
+    if (senha.length < 6)   return _err('r-err', 'A senha deve ter pelo menos 6 caracteres.');
+    if (senha !== confirma) return _err('r-err', 'As senhas não coincidem.');
 
+    // Validações ok — mostra termos antes de criar a conta
+    Termos.mostrar('cadastro', { email, nome, username, turma_id, senha }, _criarConta);
+  }
+
+  async function _criarConta(termosId) {
     const btn = document.querySelector('#pg-register .btn');
-    btn.disabled = true;
-    btn.textContent = 'Criando conta...';
+    if (btn) { btn.disabled = true; btn.textContent = 'Criando conta...'; }
+
+    const email    = _v('r-email');
+    const nome     = _v('r-nome');
+    const username = _v('r-username');
+    const turma_id = document.getElementById('r-turma')?.value || '';
+    const senha    = _v('r-senha');
 
     try {
       const res = await Api.register({ email, nome, username, turma_id, senha });
       localStorage.setItem('token', res.token);
       currentUser = res.user;
+
+      // Registra aceite dos termos após criação da conta
+      if (termosId) {
+        try { await Api.aceitarTermos(termosId); } catch (_) {}
+      }
+
       _entrarApp();
     } catch (e) {
       _err('r-err', _friendlyError(e.message));
+      UI.show('pg-register');
     } finally {
-      btn.disabled = false;
-      btn.textContent = 'Criar conta';
+      if (btn) { btn.disabled = false; btn.textContent = 'Criar conta'; }
     }
   }
 
@@ -72,7 +88,9 @@ const Auth = (() => {
       const res = await Api.login(email, senha);
       localStorage.setItem('token', res.token);
       currentUser = res.user;
-      _entrarApp();
+
+      // Verifica se precisa aceitar versão nova dos termos
+      await Termos.verificarAposLogin(() => _entrarApp());
     } catch (e) {
       _err('l-err', _friendlyError(e.message));
     } finally {
@@ -149,7 +167,8 @@ const Auth = (() => {
     if (!localStorage.getItem('token')) return false;
     try {
       currentUser = await Api.getMe();
-      _entrarApp();
+      // Verifica termos antes de entrar no app
+      await Termos.verificarAposLogin(() => _entrarApp());
       return true;
     } catch {
       localStorage.removeItem('token');

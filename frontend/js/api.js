@@ -73,6 +73,11 @@ const Api = (() => {
   const updateRegistro = (id, fd)   => _req('PATCH',  `/api/registros/${id}`, fd, true);
   const deleteImagem   = (imgId)    => _req('DELETE', `/api/registros/imagens/${imgId}`);
 
+  // ── Termos ───────────────────────────────────────────────────────
+  const getTermosAtual   = ()          => _req('GET',  '/api/termos/atual');
+  const getTermosStatus  = ()          => _req('GET',  '/api/termos/status');
+  const aceitarTermos    = (termos_id) => _req('POST', '/api/termos/aceitar', { termos_id });
+
   // ── Avaliações ───────────────────────────────────────────────────
   const getAvaliacoes    = ()      => _req('GET',    '/api/avaliacoes');
   const createAvaliacao  = (p)     => _req('POST',   '/api/avaliacoes', p);
@@ -95,6 +100,7 @@ const Api = (() => {
     getTasks, createTask, updateTask, deleteTask, markDone, unmarkDone,
     getRegistros, createRegistro, updateRegistro, deleteRegistro,
     deleteImagem,
+    getTermosAtual, getTermosStatus, aceitarTermos,
     getAvaliacoes, createAvaliacao, updateAvaliacao, deleteAvaliacao,
     adminGetUsers, adminPatchUser, adminDeleteUser,
     adminGetTurmas, adminCreateTurma, adminDeleteTurma,
