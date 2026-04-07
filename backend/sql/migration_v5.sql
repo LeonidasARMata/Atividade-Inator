@@ -38,13 +38,13 @@ TERMOS E CONDIÇÕES DE USO — ATIVIDATOR
 
 1. SOBRE O SERVIÇO
 
-O Atividator é uma plataforma digital criada com o objetivo de auxiliar alunos na organização e compartilhamento de atividades escolares. A plataforma permite que usuários registrem tarefas, organizem suas atividades pessoais e compartilhem informações com outros alunos da mesma turma.
+O Atividade-Inator é uma plataforma digital criada com o objetivo de auxiliar alunos na organização e compartilhamento de atividades escolares. A plataforma permite que usuários registrem tarefas, organizem suas atividades pessoais e compartilhem informações com outros alunos da mesma turma.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 2. NATUREZA NÃO OFICIAL
 
-O Atividator é uma ferramenta comunitária independente, desenvolvida por alunos. Por isso:
+O Atividade-Inator é uma ferramenta comunitária independente, desenvolvida por alunos. Por isso:
 
 • Não possui qualquer vínculo oficial com a escola ou seus sistemas institucionais, incluindo a plataforma Iônica.
 • Não representa professores, coordenação ou qualquer órgão institucional.
@@ -68,7 +68,7 @@ Sobre o acesso aos dados:
 
 4. USO DA PLATAFORMA
 
-Ao utilizar o Atividator, o usuário concorda em utilizá-lo de forma responsável e ética, não inserir informações falsas, enganosas ou prejudiciais, e respeitar os demais usuários.
+Ao utilizar o Atividade-Inator, o usuário concorda em utilizá-lo de forma responsável e ética, não inserir informações falsas, enganosas ou prejudiciais, e respeitar os demais usuários.
 
 O usuário pode criar atividades públicas (visíveis para a turma) e atividades privadas (de uso pessoal).
 
@@ -76,7 +76,7 @@ O usuário pode criar atividades públicas (visíveis para a turma) e atividades
 
 5. CONTEÚDO E RESPONSABILIDADE
 
-Todo conteúdo inserido na plataforma é de responsabilidade do próprio usuário. O Atividator não garante a veracidade, precisão ou completude das atividades publicadas, e não se responsabiliza por erros, omissões ou informações incorretas. Professores e canais oficiais continuam sendo a fonte principal de informação.
+Todo conteúdo inserido na plataforma é de responsabilidade do próprio usuário. O Atividade-Inator não garante a veracidade, precisão ou completude das atividades publicadas, e não se responsabiliza por erros, omissões ou informações incorretas. Professores e canais oficiais continuam sendo a fonte principal de informação.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -98,7 +98,7 @@ O descumprimento pode resultar em suspensão ou banimento da plataforma.
 
 8. LIMITAÇÃO DE RESPONSABILIDADE
 
-O Atividator é fornecido "como está", sem garantias de funcionamento contínuo ou livre de erros. O serviço pode apresentar instabilidades, ser modificado, suspenso ou encerrado a qualquer momento. A equipe não se responsabiliza por perda de informações ou prejuízos decorrentes do uso da plataforma.
+O Atividade-Inator é fornecido "como está", sem garantias de funcionamento contínuo ou livre de erros. O serviço pode apresentar instabilidades, ser modificado, suspenso ou encerrado a qualquer momento. A equipe não se responsabiliza por perda de informações ou prejuízos decorrentes do uso da plataforma.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -124,5 +124,5 @@ Para dúvidas, sugestões ou solicitações: leonidas.armata@gmail.com
 
 Este documento pode ser atualizado a qualquer momento. Alterações entram em vigor após notificação aos usuários pelo próprio sistema. O uso contínuo da plataforma após a notificação implica concordância com os termos atualizados.
 
-O Atividator não possui qualquer afiliação com marcas, empresas ou obras externas.
+O Atividade-Inator não possui qualquer afiliação com marcas, empresas ou obras externas.
 $TERMOS$);
