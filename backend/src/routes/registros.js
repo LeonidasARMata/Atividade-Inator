@@ -13,6 +13,16 @@ const upload = multer({
 
 const SIGNED_URL_TTL = 60 * 60 * 4;  // 4 horas
 
+// Remove acentos, espaços e caracteres inválidos do nome do arquivo
+function _sanitizeFilename(name) {
+  return name
+    .normalize('NFD')                        // separa letra do acento
+    .replace(/[̀-ͯ]/g, '')         // remove acentos
+    .replace(/[^a-zA-Z0-9.\-_]/g, '_')      // substitui especiais por _
+    .replace(/_+/g, '_')                     // remove underscores duplos
+    .toLowerCase();
+}
+
 router.use(authMiddleware);
 
 // ── Gera URL assinada (funciona direto no browser) ────────────────
@@ -107,7 +117,7 @@ router.post('/',
     // Upload de imagens
     const imagensSalvas = [];
     for (const file of (req.files?.imagens || [])) {
-      const path = `registros/${req.user.turma_id}/${registro.id}/img-${Date.now()}-${file.originalname}`;
+      const path = `registros/${req.user.turma_id}/${registro.id}/img-${Date.now()}-${_sanitizeFilename(file.originalname)}`;
       console.log('[Storage] Uploading image:', path, 'size:', file.size);
       const { error: upErr } = await supabase.storage
         .from('registros').upload(path, file.buffer, { contentType: file.mimetype });
@@ -126,7 +136,7 @@ router.post('/',
     let arquivo_path = null;
     if (req.files?.arquivo?.[0]) {
       const file = req.files.arquivo[0];
-      const path = `registros/${req.user.turma_id}/${registro.id}/arq-${Date.now()}-${file.originalname}`;
+      const path = `registros/${req.user.turma_id}/${registro.id}/arq-${Date.now()}-${_sanitizeFilename(file.originalname)}`;
       console.log('[Storage] Uploading file:', path, 'size:', file.size);
       const { error: upErr } = await supabase.storage
         .from('registros').upload(path, file.buffer, { contentType: file.mimetype });
@@ -168,7 +178,7 @@ router.patch('/:id',
 
     const novasImagens = [];
     for (const file of (req.files?.imagens || [])) {
-      const path = `registros/${req.user.turma_id}/${req.params.id}/img-${Date.now()}-${file.originalname}`;
+      const path = `registros/${req.user.turma_id}/${req.params.id}/img-${Date.now()}-${_sanitizeFilename(file.originalname)}`;
       const { error: upErr } = await supabase.storage
         .from('registros').upload(path, file.buffer, { contentType: file.mimetype });
       if (upErr) {
@@ -187,7 +197,7 @@ router.patch('/:id',
       if (data.arquivo_path)
         await supabase.storage.from('registros').remove([data.arquivo_path]);
       const file = req.files.arquivo[0];
-      const path = `registros/${req.user.turma_id}/${req.params.id}/arq-${Date.now()}-${file.originalname}`;
+      const path = `registros/${req.user.turma_id}/${req.params.id}/arq-${Date.now()}-${_sanitizeFilename(file.originalname)}`;
       const { error: upErr } = await supabase.storage
         .from('registros').upload(path, file.buffer, { contentType: file.mimetype });
       if (upErr) {
