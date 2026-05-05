@@ -13,6 +13,15 @@ const upload = multer({
 
 const SIGNED_URL_TTL = 60 * 60 * 4;  // 4 horas
 
+// Corrige encoding do originalname (multer recebe latin-1, precisamos UTF-8)
+function _decodeFilename(name) {
+  try {
+    return Buffer.from(name, 'latin1').toString('utf8');
+  } catch {
+    return name;
+  }
+}
+
 // Remove acentos, espaços e caracteres inválidos do nome do arquivo
 function _sanitizeFilename(name) {
   return name
@@ -101,7 +110,7 @@ router.post('/',
       return res.status(400).json({ error: 'Preencha pelo menos descrição, imagem ou arquivo.' });
 
     // Guarda nome original do arquivo para exibição (antes do upload)
-    const arquivoNomeOriginal = req.files?.arquivo?.[0]?.originalname || null;
+    const arquivoNomeOriginal = req.files?.arquivo?.[0] ? _decodeFilename(req.files.arquivo[0].originalname) : null;
 
     const { data: registro, error: rErr } = await supabase
       .from('registros')
@@ -200,7 +209,7 @@ router.patch('/:id',
       if (data.arquivo_path)
         await supabase.storage.from('registros').remove([data.arquivo_path]);
       const file = req.files.arquivo[0];
-      arquivo_nome_original = file.originalname;
+      arquivo_nome_original = _decodeFilename(file.originalname);
       const path = `registros/${req.user.turma_id}/${req.params.id}/arq-${Date.now()}-${_sanitizeFilename(file.originalname)}`;
       const { error: upErr } = await supabase.storage
         .from('registros').upload(path, file.buffer, { contentType: file.mimetype });
@@ -208,7 +217,7 @@ router.patch('/:id',
         console.error('[Storage] File upload error:', upErr.message);
       } else {
         await supabase.from('registros')
-          .update({ arquivo_path: path, arquivo_nome_original: file.originalname })
+          .update({ arquivo_path: path, arquivo_nome_original: _decodeFilename(file.originalname) })
           .eq('id', req.params.id);
         arquivo_path = path;
       }
