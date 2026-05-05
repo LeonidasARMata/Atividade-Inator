@@ -68,9 +68,9 @@ router.get('/', async (req, res) => {
     owner_username:   r.users?.username || null,
     imagens:          await _signImagens(r.registro_imagens || []),
     arquivo_url:      await _signedUrl(r.arquivo_path),
-    arquivo_nome:     r.arquivo_path
+    arquivo_nome:     r.arquivo_nome_original || (r.arquivo_path
       ? r.arquivo_path.split('/').pop().replace(/^arq-\d+-/, '')
-      : null,
+      : null),
     users:            undefined,
     registro_imagens: undefined,
   })));
@@ -100,15 +100,19 @@ router.post('/',
     if (!temDescricao && !temImagem && !temArquivo)
       return res.status(400).json({ error: 'Preencha pelo menos descrição, imagem ou arquivo.' });
 
+    // Guarda nome original do arquivo para exibição (antes do upload)
+    const arquivoNomeOriginal = req.files?.arquivo?.[0]?.originalname || null;
+
     const { data: registro, error: rErr } = await supabase
       .from('registros')
       .insert({
         titulo,
         materia,
-        descricao:       descricao || null,
-        data_atribuicao: data_atribuicao || new Date().toISOString().split('T')[0],
-        turma_id:        req.user.turma_id,
-        owner_id:        req.user.id,
+        descricao:             descricao || null,
+        data_atribuicao:       data_atribuicao || new Date().toISOString().split('T')[0],
+        arquivo_nome_original: arquivoNomeOriginal,
+        turma_id:              req.user.turma_id,
+        owner_id:              req.user.id,
       })
       .select().single();
 
@@ -153,9 +157,7 @@ router.post('/',
       owner_username: req.user.username,
       imagens:        await _signImagens(imagensSalvas),
       arquivo_url:    await _signedUrl(arquivo_path),
-      arquivo_nome:   arquivo_path
-        ? arquivo_path.split('/').pop().replace(/^arq-\d+-/, '')
-        : null,
+      arquivo_nome:   arquivoNomeOriginal,
     });
   }
 );
@@ -193,17 +195,21 @@ router.patch('/:id',
     }
 
     let arquivo_path = data.arquivo_path;
+    let arquivo_nome_original = data.arquivo_nome_original;
     if (req.files?.arquivo?.[0]) {
       if (data.arquivo_path)
         await supabase.storage.from('registros').remove([data.arquivo_path]);
       const file = req.files.arquivo[0];
+      arquivo_nome_original = file.originalname;
       const path = `registros/${req.user.turma_id}/${req.params.id}/arq-${Date.now()}-${_sanitizeFilename(file.originalname)}`;
       const { error: upErr } = await supabase.storage
         .from('registros').upload(path, file.buffer, { contentType: file.mimetype });
       if (upErr) {
         console.error('[Storage] File upload error:', upErr.message);
       } else {
-        await supabase.from('registros').update({ arquivo_path: path }).eq('id', req.params.id);
+        await supabase.from('registros')
+          .update({ arquivo_path: path, arquivo_nome_original: file.originalname })
+          .eq('id', req.params.id);
         arquivo_path = path;
       }
     }
@@ -212,9 +218,7 @@ router.patch('/:id',
       ...data,
       imagens:     await _signImagens(novasImagens),
       arquivo_url: await _signedUrl(arquivo_path),
-      arquivo_nome: arquivo_path
-        ? arquivo_path.split('/').pop().replace(/^arq-\d+-/, '')
-        : null,
+      arquivo_nome: arquivo_nome_original,
     });
   }
 );
