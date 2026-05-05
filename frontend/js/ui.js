@@ -419,7 +419,9 @@ const UI = (() => {
     // Arquivo
     const arquivoEl = document.getElementById('det-arquivo');
     if (r.arquivo_url) {
-      const nome = r.arquivo_url.split('/').pop().replace(/^arq-\d+-/, '');
+      // Usa arquivo_nome enviado pelo backend; fallback para extrair da URL se não vier
+      const nome = r.arquivo_nome
+        || decodeURIComponent(r.arquivo_url.split('/').pop().split('?')[0]).replace(/^arq-\d+-/, '');
       arquivoEl.innerHTML = `
         <a class="btn-arquivo" href="${r.arquivo_url}" target="_blank" rel="noopener">
           <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
