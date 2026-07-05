@@ -168,8 +168,10 @@ const UI = (() => {
   // ─── FAB dispatcher ───────────────────────────────────────────────────────
 
   function fabClick() {
-    if (currentSection === 'tarefas')   abrirModalTarefa();
-    if (currentSection === 'registros') abrirModalRegistro();
+    console.log('[FAB] clicado — seção atual:', currentSection, '| isAdmin:', Auth.isAdmin());
+    if (currentSection === 'tarefas')    abrirModalTarefa();
+    if (currentSection === 'registros')  abrirModalRegistro();
+    if (currentSection === 'avaliacoes') abrirModalAvaliacao();
   }
 
   // ─── Helpers de formulário ────────────────────────────────────────────────
