@@ -1,7 +1,7 @@
 const Auth = (() => {
   let currentUser = null;
   const get = () => currentUser;
-  const isAdmin = () => currentUser?.is_admin === true;
+  const isAdmin = () => !!currentUser?.is_admin;
 
   // ── Carrega turmas no select do cadastro ──────────────────────
   async function carregarTurmas() {
