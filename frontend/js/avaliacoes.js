@@ -72,13 +72,21 @@ const Avaliacoes = (() => {
 
   // ── Abre modal CRIAR ───────────────────────────────────────────
   function abrirParaCriar() {
-    if (!Auth.isAdmin()) return;
-    _editingId = null;
-    document.getElementById('av-titulo-modal').textContent       = 'Nova avaliação';
-    document.getElementById('btn-salvar-av').textContent         = 'Cadastrar';
-    document.getElementById('btn-excluir-av').style.display      = 'none';
-    _limpar();
-    document.getElementById('ov-avaliacao').classList.add('on');
+    try {
+      if (!Auth.isAdmin()) {
+        console.warn('[Avaliacoes] abrirParaCriar: usuário não é admin.', Auth.get());
+        return;
+      }
+      _editingId = null;
+      document.getElementById('av-titulo-modal').textContent  = 'Nova avaliação';
+      document.getElementById('btn-salvar-av').textContent    = 'Cadastrar';
+      document.getElementById('btn-excluir-av').style.display = 'none';
+      _limpar();
+      montarSelectTipo('av-tipo');
+      document.getElementById('ov-avaliacao').classList.add('on');
+    } catch (e) {
+      console.error('[Avaliacoes] Erro ao abrir modal:', e);
+    }
   }
 
   // ── Abre modal EDITAR ──────────────────────────────────────────
